@@ -6,6 +6,9 @@
 	import type { ISelectItem } from '$lib/types/selectItem';
 	import Selecter from '$lib/components/selecter';
 	import { ColorWheel } from 'radix-icons-svelte';
+	import { confetti } from '@neoconfetti/svelte';
+	import { ScoreLevelList } from '$lib/types/score';
+	import { titleEmoji } from '$lib/stores/stores';
 
 	// 月薪
 	let monthlySalary: number;
@@ -148,9 +151,12 @@
 
 	// 最终计算得出的工作性价比
 	let finalScore: number;
+	let finalScoreLevel: string;
+	let finalScoreEvaluate: string;
 	let calculateLoading: boolean = false;
 
 	function calculate() {
+		finalScore = 0;
 		calculateLoading = true;
 		setTimeout(() => {
 			calculateLoading = false;
@@ -164,7 +170,19 @@
 			final = final * workBefore830Val.value;
 			// console.log(final);
 			finalScore = Number(final.toFixed(2));
-			console.log(finalScore)
+			console.log(finalScore);
+			// 生成描述
+			ScoreLevelList.forEach((v, i) => {
+				if (finalScore >= v.min && finalScore < v.max) {
+					let idx = Math.floor((Math.random() * v.evaluate.length));
+					finalScoreEvaluate = v.evaluate[idx];
+					finalScoreLevel = v.level;
+					titleEmoji.set(v.emoji);
+				}
+			});
+			// 返回顶部
+			document.body.scrollTop = document.documentElement.scrollTop = 0;
+
 		}, 100);
 	}
 
@@ -183,23 +201,44 @@
 		colleagueEnvVal = colleagueEnv[1];
 		occupationalQualificationVal = occupationalQualification[0];
 		workBefore830Val = workBefore830[1];
+		finalScore = 0;
 	}
-
 </script>
+
 <div>
-	<!--{#if finalScore > 0}-->
-	<!--	<Card>-->
-	<!--		{finalScore}-->
-	<!--	</Card>-->
-	<!--{/if}-->
+	{#if finalScore > 0}
+		<div class="flex justify-center">
+			<div use:confetti={{
+				stageHeight: 800,
+				stageWidth: 1024
+			}}>
+			</div>
+		</div>
+		<Card class="mb-6 bg-primary text-white">
+			<CardHeader>
+				<CardTitle>
+					工作性价比&nbsp;&nbsp;-&nbsp;&nbsp;{finalScoreLevel} {$titleEmoji}
+				</CardTitle>
+				<CardDescription>
+					<div class="text-white">
+						{finalScoreEvaluate}
+					</div>
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<p>综合指数：{finalScore}</p>
+				<p>日薪：{averageDailySalary}</p>
+				<p>时薪：{averageHourSalary}</p>
+				<p>环境系数：{envComprehensiveCoefficient}</p>
+			</CardContent>
+		</Card>
+	{/if}
 
 	<Card>
 		<CardHeader>
 			<CardTitle>
-				title
 			</CardTitle>
 			<CardDescription>
-				description
 			</CardDescription>
 		</CardHeader>
 		<CardContent>
