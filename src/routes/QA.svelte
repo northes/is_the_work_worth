@@ -26,9 +26,6 @@
 					<div>
 						<MathMl {tex} />
 					</div>
-					<div>
-
-					</div>
 				</div>
 			</AccordionContent>
 		</AccordionItem>
