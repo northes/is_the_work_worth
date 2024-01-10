@@ -11,6 +11,7 @@
 	import { ScoreLevelList } from '$lib/types/score';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Label } from '$lib/components/ui/label';
+	import toast from 'svelte-french-toast';
 
 
 	// 月薪
@@ -20,18 +21,18 @@
 	// 薪酬类型(true:年薪，false:月薪)
 	let isYearlySalary: boolean = true;
 	$: yearlySalaryMsg = isYearlySalary ? '年薪' : '月薪';
-	$: salaryTips = ():string => {
-		let t = "税前" + yearlySalaryMsg + "，包含各种奖与各种补贴"
+	$: salaryTips = (): string => {
+		let t = '税前' + yearlySalaryMsg + '，包含各种奖与各种补贴';
 		if (!isYearlySalary && salary > 0) {
-			t += '，计算可得年薪: ' + salary * 12
+			t += '，计算可得年薪: ' + salary * 12;
 		}
-		return t
-	}
+		return t;
+	};
 	// 薪酬
 	let salary: number;
 	// 平均日薪
 	$: dalySalary = Number((isYearlySalary ? salary / 365 : salary * 12 / 365).toFixed(2));
-	$: console.log(dalySalary)
+	$: console.log(dalySalary);
 	// 平均时薪
 	$: hourlySalary = Number((dalySalary / (workingHours - fishingTime)).toFixed(2));
 
@@ -215,14 +216,35 @@
 	let finalScoreEvaluate: string;
 	let calculateLoading: boolean = false;
 
-	function preRecalculate() {
+	function preRecalculate(): boolean {
 		finalScore = 0;
 		finalEnvCoefficient = 1;
 		finalRestCoefficient = 1;
+
+		switch (0) {
+			case dalySalary:
+			case finalEnvCoefficient:
+			case finalRestCoefficient:
+			case workingHours:
+				return false;
+		}
+
+		if (!degreeVal) {
+			return false;
+		}
+
+		if (!cityVal) {
+			return false;
+		}
+
+		return true;
 	}
 
 	function calculate() {
-		preRecalculate()
+		if (!preRecalculate()) {
+			toast.error("有空没填/没选")
+			return;
+		}
 		calculateLoading = true;
 		setTimeout(() => {
 			// 环境系数
@@ -253,7 +275,7 @@
 				workingHours + 0.5 * commutingTime - 0.5 * fishingTime
 			) * degreeVal.value * cityVal.value;
 
-			console.log(a,'--',b)
+			console.log(a, '--', b);
 
 			finalScore = Math.sqrt(a / b);
 			finalScore = Number(finalScore.toFixed(2));
