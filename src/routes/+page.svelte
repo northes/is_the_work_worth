@@ -42,7 +42,7 @@
 		},
 		{
 			value: 1.2,
-			label: '211/985本科'
+			label: '211/985 本科'
 		},
 		{
 			value: 1.4,
@@ -50,7 +50,7 @@
 		},
 		{
 			value: 1.6,
-			label: '211/985硕士'
+			label: '211/985 硕士'
 		},
 		{
 			value: 1.8,
@@ -58,7 +58,7 @@
 		},
 		{
 			value: 2.0,
-			label: '211/985博士'
+			label: '211/985 博士'
 		}
 	];
 	let degreeVal: ISelectItem;
@@ -66,11 +66,11 @@
 	const workingEnv: ISelectItem[] = [
 		{
 			value: 0.8,
-			label: '偏僻地区'
+			label: '偏僻地区或郊外'
 		},
 		{
 			value: 0.9,
-			label: '工厂户外'
+			label: '工厂、工地、艰苦的户外'
 		},
 		{
 			value: 1.0,
@@ -78,7 +78,7 @@
 		},
 		{
 			value: 1.1,
-			label: '体制内'
+			label: 'CBD、体制内'
 		}
 	];
 	let workingEnvVal: ISelectItem;
@@ -86,7 +86,7 @@
 	const oppositeSexEnv: ISelectItem[] = [
 		{
 			value: 0.9,
-			label: '没有'
+			label: '没有好看的'
 		},
 		{
 			value: 1.0,
@@ -94,7 +94,7 @@
 		},
 		{
 			value: 1.1,
-			label: '很多'
+			label: '有很多！'
 		}
 	];
 	let oppositeSexEnvVal: ISelectItem;
@@ -106,11 +106,11 @@
 		},
 		{
 			value: 1.0,
-			label: '普通很多'
+			label: '基本上都是普通同事'
 		},
 		{
 			value: 1.05,
-			label: '优秀很多'
+			label: '优秀的大佬很多'
 		}
 	];
 	let colleagueEnvVal: ISelectItem;

@@ -32,7 +32,7 @@ export const ScoreLevelList: IScore[] = [
 		min: 2.0,
 		max: 99999,
 		level: '极高',
-		evaluate: ['极具性价比！','人生赢家！','相由薪生'],
+		evaluate: ['极具性价比！','人生赢家！','我说怎么有人好看又有钱，原来是相由薪生','简直是神仙工作'],
 		emoji: '🤩'
 	}
 ];
