@@ -1,91 +1,54 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
 	import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
-	import { Label } from '$lib/components/ui/label';
-	import type { ISelectItem } from '$lib/types/selectItem';
 	import Selecter from '$lib/components/selecter';
-	import { ColorWheel } from 'radix-icons-svelte';
+	import Inputer from '$lib/components/inputer';
+	import Labeler from '$lib/components/labeler';
+	import type { ISelectItem } from '$lib/types/selectItem';
+	import { Reload } from 'radix-icons-svelte';
 	import { confetti } from '@neoconfetti/svelte';
-	import { ScoreLevelList } from '$lib/types/score';
 	import { titleEmoji } from '$lib/stores/stores';
+	import { ScoreLevelList } from '$lib/types/score';
+
 
 	// 月薪
-	let monthlySalary: number;
-	// 公积金
-	let accumulationFund: number;
-	// 工作天数
-	let workingDays: number;
-	// 平均日薪（只读）
-	$: averageDailySalary = Number(((Number(monthlySalary) + Number(accumulationFund)) / Number(workingDays)).toFixed(2));
-	// 工作时长
-	let workingHours: number;
-	// 通勤时长
-	let commutingTime: number;
-	// 摸鱼时长
-	let fishingTime: number;
-	// 午休时长
-	let lunchTime: number;
+	// let monthlySalary: number;
+	// 年薪
+	// let annualSalary: number;
+	// 薪酬类型(true:年薪，false:月薪)
+	let yearlySalary: boolean = true;
+	$: yearlySalaryMsg = yearlySalary ? '年薪' : '月薪';
+	// 薪酬
+	let salary: number;
+	// 平均日薪
+	$: dalySalary = Number((salary / 365).toFixed(2));
 	// 平均时薪
-	$: averageHourSalary = Number((Number(averageDailySalary) / (workingHours - fishingTime - lunchTime)).toFixed(2));
+	$: hourlySalary = Number((dalySalary/(workingHours - fishingTime)).toFixed(2))
 
-
-	// 学历
-	const degrees: ISelectItem[] = [
-		{
-			value: 0.8,
-			label: '专科及以下'
-		},
-		{
-			value: 1.0,
-			label: '普通本科'
-		},
-		{
-			value: 1.2,
-			label: '211/985 本科'
-		},
-		{
-			value: 1.4,
-			label: '普通硕士'
-		},
-		{
-			value: 1.6,
-			label: '211/985 硕士'
-		},
-		{
-			value: 1.8,
-			label: '普通博士'
-		},
-		{
-			value: 2.0,
-			label: '211/985 博士'
-		}
-	];
-	let degreeVal: ISelectItem;
 	// 工作环境
 	const workingEnv: ISelectItem[] = [
 		{
-			value: 0.8,
-			label: '偏僻地区或郊外'
+			value: 0.85,
+			label: '偏僻地区或郊区的工厂、工地、艰苦户外等'
 		},
 		{
 			value: 0.9,
-			label: '工厂、工地、艰苦的户外'
+			label: '工厂、工地、艰苦户外等'
 		},
 		{
 			value: 1.0,
-			label: '普通'
+			label: '普普通通'
 		},
 		{
-			value: 1.1,
+			value: 1.05,
 			label: 'CBD、体制内'
 		}
 	];
 	let workingEnvVal: ISelectItem;
-	// 异性环境
-	const oppositeSexEnv: ISelectItem[] = [
+	// 异性
+	const sexEnv: ISelectItem[] = [
 		{
-			value: 0.9,
+			value: 0.98,
 			label: '没有好看的'
 		},
 		{
@@ -93,15 +56,15 @@
 			label: '不多不少'
 		},
 		{
-			value: 1.1,
-			label: '有很多！'
+			value: 1.02,
+			label: '有很多好看的'
 		}
 	];
-	let oppositeSexEnvVal: ISelectItem;
-	// 同事环境
+	let sexEnvVal: ISelectItem;
+	// 同事
 	const colleagueEnv: ISelectItem[] = [
 		{
-			value: 0.95,
+			value: 0.98,
 			label: 'SB很多'
 		},
 		{
@@ -109,45 +72,132 @@
 			label: '基本上都是普通同事'
 		},
 		{
-			value: 1.05,
+			value: 1.02,
 			label: '优秀的大佬很多'
 		}
 	];
 	let colleagueEnvVal: ISelectItem;
-	// 职业资格
-	const occupationalQualification: ISelectItem[] = [
+	// 综合环境系数
+	let finalEnvCoefficient = 1;
+	// $: finalEnvCoefficient = workingEnvVal.value * sexEnvVal.value * colleagueEnvVal.value;
+
+	// 休息日
+	const restDays: ISelectItem[] = [
 		{
-			value: 1.00,
-			label: '无要求、二级'
+			value: 0.8,
+			label: '月休2天及以下'
+		}, {
+			value: 0.85,
+			label: '月休3天'
+		}, {
+			value: 0.9,
+			label: '单休'
+		}, {
+			value: 0.95,
+			label: '大小周'
+		}, {
+			value: 1.0,
+			label: '双休'
+		}, {
+			value: 1.05,
+			label: '双休以上'
+		}
+	];
+	let restDaysVal: ISelectItem;
+	// 上班时间
+	const workingTime: ISelectItem[] = [
+		{
+			value: 0.95,
+			label: '早上8点左右上班'
+		}, {
+			value: 0.10,
+			label: '早上9点左右上班'
+		}, {
+			value: 1.05,
+			label: '早上10点以后上班'
+		}
+	];
+	let workingTimeVal: ISelectItem;
+	// 下班后工作
+	const otWorking: ISelectItem[] = [
+		{
+			value: 0.95,
+			label: '下班后偶尔少量义务加班'
+		},
+		{
+			value: 1.0,
+			label: '下班后不怎么加班'
+		},
+		{
+			value: 0.85,
+			label: '下班后经常义务加班'
+		}
+	];
+	let otWorkingVal: ISelectItem;
+	// 综合休息系数
+	let finalRestCoefficient = 1;
+	// $: finalRestCoefficient = restDaysVal.value * workingTimeVal.value * otWorkingVal.value;
+
+	// 工作时长
+	let workingHours: number;
+	// 通勤时长
+	let commutingTime: number;
+	// 摸鱼时长
+	let fishingTime: number;
+
+	// 学历系数
+	const degrees: ISelectItem[] = [
+		{
+			value: 0.9,
+			label: '专科及以下'
+		},
+		{
+			value: 1.0,
+			label: '普通本科'
+		},
+		{
+			value: 1.1,
+			label: '211/985 本科'
+		},
+		{
+			value: 1.6,
+			label: '普通硕士'
+		},
+		{
+			value: 1.8,
+			label: '211/985 硕士'
+		},
+		{
+			value: 2.0,
+			label: '普通博士'
+		},
+		{
+			value: 2.4,
+			label: '211/985 博士'
+		}
+	];
+	let degreeVal: ISelectItem;
+	// 城市系数
+	const city: ISelectItem[] = [
+		{
+			value: 1.1,
+			label: '一线城市'
 		},
 		{
 			value: 1.05,
-			label: '建造造价监理'
+			label: '新一线城市'
 		},
 		{
-			value: 1.10,
-			label: '建筑岩土结构'
+			value: 1.0,
+			label: '二线城市'
 		},
 		{
-			value: 1.15,
-			label: '主任医师、教授'
+			value: 0.9,
+			label: '三线及以下城市'
 		}
 	];
-	let occupationalQualificationVal: ISelectItem;
-	// 是否8:30前上班
-	const workBefore830: ISelectItem[] = [
-		{
-			value: 0.95,
-			label: '是'
-		}, {
-			value: 1.00,
-			label: '否'
-		}
-	];
-	let workBefore830Val: ISelectItem;
+	let cityVal: ISelectItem;
 
-	// 环境系数
-	let envComprehensiveCoefficient: number;
 
 	// 最终计算得出的工作性价比
 	let finalScore: number;
@@ -159,18 +209,36 @@
 		finalScore = 0;
 		calculateLoading = true;
 		setTimeout(() => {
-			calculateLoading = false;
-			// 环境综合系数
-			envComprehensiveCoefficient = workingEnvVal.value *
-				oppositeSexEnvVal.value *
-				colleagueEnvVal.value *
-				occupationalQualificationVal.value;
+			// 环境系数
+			if (workingEnvVal) {
+				finalEnvCoefficient *= workingEnvVal.value;
+			}
+			if (sexEnvVal) {
+				finalEnvCoefficient *= sexEnvVal.value;
+			}
+			if (colleagueEnvVal) {
+				finalEnvCoefficient *= colleagueEnvVal.value;
+			}
 
-			let final = (averageDailySalary * envComprehensiveCoefficient) / (35 * (Number(workingHours) + Number(commutingTime) - 0.5 * (Number(fishingTime) + Number(lunchTime))) * degreeVal.value);
-			final = final * workBefore830Val.value;
-			// console.log(final);
-			finalScore = Number(final.toFixed(2));
-			console.log(finalScore);
+			// 休息系数
+			if (restDaysVal) {
+				finalRestCoefficient *= restDaysVal.value;
+			}
+			if (workingTimeVal) {
+				finalRestCoefficient *= workingTimeVal.value;
+			}
+			if (otWorkingVal) {
+				finalRestCoefficient *= otWorkingVal.value;
+			}
+
+			// 计算最终值
+			let a = dalySalary * finalEnvCoefficient * finalRestCoefficient;
+			let b = 25 * (
+				workingHours + 0.5 * commutingTime - 0.5 * fishingTime
+			) * degreeVal.value * cityVal.value;
+			finalScore = Math.sqrt(a / b);
+			finalScore = Number(finalScore.toFixed(2));
+
 			// 生成描述
 			ScoreLevelList.forEach((v, i) => {
 				if (finalScore >= v.min && finalScore < v.max) {
@@ -180,28 +248,30 @@
 					titleEmoji.set(v.emoji);
 				}
 			});
+
+			calculateLoading = false;
+
 			// 返回顶部
 			document.body.scrollTop = document.documentElement.scrollTop = 0;
+			console.log(finalScore);
 
 		}, 100);
 	}
 
 	// 填充示例数据
 	function demoVal() {
-		monthlySalary = 8000;
-		accumulationFund = 100;
-		workingDays = 25;
-		workingHours = 8;
-		commutingTime = 1;
-		fishingTime = 1.5;
-		lunchTime = 1.5;
-		degreeVal = degrees[1];
-		workingEnvVal = workingEnv[2];
-		oppositeSexEnvVal = oppositeSexEnv[0];
+		salary = 12000 * 12;
+		workingEnvVal = workingEnv[3];
+		sexEnvVal = sexEnv[0];
 		colleagueEnvVal = colleagueEnv[1];
-		occupationalQualificationVal = occupationalQualification[0];
-		workBefore830Val = workBefore830[1];
-		finalScore = 0;
+		restDaysVal = restDays[4];
+		workingTimeVal = workingTime[2];
+		otWorkingVal = otWorking[1];
+		workingHours = 19 - 10;
+		commutingTime = 0.5;
+		fishingTime = 1.5+4;
+		degreeVal = degrees[1];
+		cityVal = city[0];
 	}
 </script>
 
@@ -209,7 +279,8 @@
 	{#if finalScore > 0}
 		<div class="flex justify-center">
 			<div use:confetti={{
-				stageHeight: 800,
+				particleSize: 10,
+				stageHeight: 1024,
 				stageWidth: 1024
 			}}>
 			</div>
@@ -227,9 +298,9 @@
 			</CardHeader>
 			<CardContent>
 				<p>综合指数：{finalScore}</p>
-				<p>日薪：{averageDailySalary}</p>
-				<p>时薪：{averageHourSalary}</p>
-				<p>环境系数：{envComprehensiveCoefficient}</p>
+				<p>日薪：{dalySalary}</p>
+				<p>时薪：{hourlySalary}</p>
+				<p>环境系数：{finalEnvCoefficient}</p>
 			</CardContent>
 		</Card>
 	{/if}
@@ -244,73 +315,64 @@
 		<CardContent>
 			<form>
 				<div class="grid w-full items-center gap-4">
-					<div class="flex flex-col space-y-1.5">
-						<Label>月薪</Label>
-						<Input bind:value={monthlySalary} placeholder="每个月的固定工资" />
-					</div>
-					<div class="flex flex-col space-y-1.5">
-						<Label>公积金</Label>
-						<Input bind:value={accumulationFund} placeholder="自己每个月交多少钱" />
-					</div>
-					<div class="flex flex-col space-y-1.5">
-						<Label>工作天数</Label>
-						<Input bind:value={workingDays} placeholder="每个月工作天数" />
-					</div>
-					<div class="flex flex-col space-y-1.5">
-						<Label>平均日薪</Label>
-						<Input disabled value={averageDailySalary >= 0 ? averageDailySalary : 0} placeholder="" />
-					</div>
-					<div class="flex flex-col space-y-1.5">
-						<Label>工作时长</Label>
-						<Input bind:value={workingHours} placeholder="下班时间-上班时间" />
-					</div>
-					<div class="flex flex-col space-y-1.5">
-						<Label>通勤时长</Label>
-						<Input bind:value={commutingTime} placeholder="小时" />
-					</div>
-					<div class="flex flex-col space-y-1.5">
-						<Label>摸鱼时长</Label>
-						<Input bind:value={fishingTime} placeholder="不干活的时间" />
-					</div>
-					<div class="flex flex-col space-y-1.5">
-						<Label>午休时长</Label>
-						<Input bind:value={lunchTime} placeholder="中午吃饭+午休" />
-					</div>
-					<div class="flex flex-col space-y-1.5">
-						<Label>平均时薪</Label>
-						<Input disabled value={averageHourSalary >= 0 ? averageHourSalary : 0} placeholder="" />
-					</div>
-					<div class="flex flex-col space-y-1.5">
-						<Label>环境系数</Label>
-						<Input disabled value={envComprehensiveCoefficient >= 0 ? envComprehensiveCoefficient : 0} placeholder="" />
-					</div>
+					<Labeler label={"薪酬"}>
+						<Inputer bind:value={salary} tips={"包含各种奖与各种补贴"}>
+							<!--							<Switch id="airplane-mode" bind:checked={yearlySalary} />-->
+							<!--							<Label for="airplane-mode">{yearlySalaryMsg}</Label>-->
+						</Inputer>
+					</Labeler>
 
-					<div>
-						<Selecter label="学历" source={degrees} bind:selected={degreeVal} />
-					</div>
-					<div>
-						<Selecter label="工作环境" source={workingEnv} bind:selected={workingEnvVal} />
-					</div>
-					<div>
-						<Selecter label="异性环境" source={oppositeSexEnv} bind:selected={oppositeSexEnvVal} />
-					</div>
-					<div>
-						<Selecter label="同事环境" source={colleagueEnv} bind:selected={colleagueEnvVal} />
-					</div>
-					<div>
-						<Selecter label="职业资格" source={occupationalQualification}
-											bind:selected={occupationalQualificationVal} />
-					</div>
-					<div>
-						<Selecter label="8:30前上班" source={workBefore830} bind:selected={workBefore830Val} />
-					</div>
+					<Labeler label="工作环境">
+						<Selecter source={workingEnv} bind:selectedVal={workingEnvVal} />
+					</Labeler>
+
+					<Labeler label="异性">
+						<Selecter source={sexEnv} bind:selectedVal={sexEnvVal} />
+					</Labeler>
+
+					<Labeler label="同事">
+						<Selecter source={colleagueEnv} bind:selectedVal={colleagueEnvVal} />
+					</Labeler>
+
+					<Labeler label="休息日">
+						<Selecter source={restDays} bind:selectedVal={restDaysVal} />
+					</Labeler>
+
+					<Labeler label="上班时间">
+						<Selecter source={workingTime} bind:selectedVal={workingTimeVal} />
+					</Labeler>
+
+					<Labeler label="加班">
+						<Selecter source={otWorking} bind:selectedVal={otWorkingVal} />
+					</Labeler>
+
+					<Labeler label={"工作时长"}>
+						<Inputer bind:value={workingHours} />
+					</Labeler>
+
+					<Labeler label={"通勤时长"}>
+						<Inputer bind:value={commutingTime} />
+					</Labeler>
+
+					<Labeler label={"摸鱼时长"}>
+						<Inputer bind:value={fishingTime} />
+					</Labeler>
+
+					<Labeler label="学历">
+						<Selecter source={degrees} bind:selectedVal={degreeVal} />
+					</Labeler>
+
+					<Labeler label="城市">
+						<Selecter source={city} bind:selectedVal={cityVal} />
+					</Labeler>
+
 				</div>
 			</form>
 		</CardContent>
 		<CardFooter class="gap-3">
 			<Button class="w-1/2" on:click={calculate}>
 				{#if calculateLoading}
-					<ColorWheel class="mr-2 h-4 w-4 animate-spin" />
+					<Reload class="mr-2 h-4 w-4 animate-spin" />
 				{/if}
 				Calculate
 

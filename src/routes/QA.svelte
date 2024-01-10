@@ -2,13 +2,13 @@
 	import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '$lib/components/ui/accordion';
 	import MathMl from 'svelte-tex/package/MathML.svelte';
 
-	const tex = String.raw`工作性价比 = \frac{平均日薪\times 综合环境系数}{35\times \left ( 工作时长+  通勤时长- 0.5\times \left ( 摸鱼时长+  午休时长 \right )  \right ) \times 学历系数} `;
+	const tex = String.raw`工作性价比 = \sqrt{\frac{平均日薪系数\times 综合环境系数\times 综合作息系数}{25\times \left ( 工作时长+  0.5 \times 通勤时长- 0.5\times 摸鱼时长 \right )\times 学历系数\times 城市系数 } } `;
 </script>
 
 <div>
-	<Accordion class="w-full" multiple={true} value={["item-1"]}>
+	<Accordion class="w-full">
 		<AccordionItem value="item-1">
-			<AccordionTrigger>计算公式?</AccordionTrigger>
+			<AccordionTrigger>计算公式</AccordionTrigger>
 			<AccordionContent>
 				<div class="space-y-6">
 					<div>
@@ -33,9 +33,15 @@
 			</AccordionContent>
 		</AccordionItem>
 		<AccordionItem value="item-2">
-			<AccordionTrigger>准确性如何?</AccordionTrigger>
+			<AccordionTrigger>准确性如何</AccordionTrigger>
 			<AccordionContent>
 				仅供娱乐。很多东西没办法用数字衡量，很多变量也没考虑在内（福利，成长性，稳定性，工作压力，人际关系等）
+			</AccordionContent>
+		</AccordionItem>
+		<AccordionItem value="item-3">
+			<AccordionTrigger>哪些是新一线城市</AccordionTrigger>
+			<AccordionContent>
+				根据2023公布的最新数据：成都、重庆、杭州、武汉、苏州、西安、南京、长沙、天津、郑州、东莞、青岛、昆明、宁波、合肥
 			</AccordionContent>
 		</AccordionItem>
 	</Accordion>
