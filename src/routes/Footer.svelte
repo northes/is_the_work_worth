@@ -1,13 +1,19 @@
 <div class="flex flex-col items-center gap-2 text-sm text-muted-foreground cursor-pointer font-serif">
 		<div class="flex space-x-1.5 justify-center">
 			<div>
+				Light
+			</div>
+			<div>
+				.
+			</div>
+			<div>
 				Language
 			</div>
 			<div>
 				.
 			</div>
 			<div>
-				Github
+				<a href="https://github.com/northes/is_the_work_worth">Github</a>
 			</div>
 			<div>
 				.

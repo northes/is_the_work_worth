@@ -5,7 +5,7 @@
 	import Inputer from '$lib/components/inputer';
 	import Labeler from '$lib/components/labeler';
 	import type { ISelectItem } from '$lib/types/selectItem';
-	import { Reload } from 'radix-icons-svelte';
+	import { Loader2} from 'lucide-svelte';
 	import { confetti } from '@neoconfetti/svelte';
 	import { titleEmoji } from '$lib/stores/stores';
 	import { ScoreLevelList } from '$lib/types/score';
@@ -255,7 +255,7 @@
 			document.body.scrollTop = document.documentElement.scrollTop = 0;
 			console.log(finalScore);
 
-		}, 100);
+		}, 200);
 	}
 
 	// 填充示例数据
@@ -372,12 +372,11 @@
 		<CardFooter class="gap-3">
 			<Button class="w-1/2" on:click={calculate}>
 				{#if calculateLoading}
-					<Reload class="mr-2 h-4 w-4 animate-spin" />
+					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 				{/if}
-				Calculate
-
+				计算
 			</Button>
-			<Button variant={"outline"} class="w-1/2" on:click={demoVal}>demo</Button>
+			<Button variant={"outline"} class="w-1/2" on:click={demoVal}>示例数据</Button>
 		</CardFooter>
 	</Card>
 </div>
