@@ -283,8 +283,8 @@
 			// 生成描述
 			ScoreLevelList.forEach((v, i) => {
 				if (finalScore >= v.min && finalScore < v.max) {
-					let idx = Math.floor((Math.random() * v.evaluate.length));
-					finalScoreEvaluate = v.evaluate[idx];
+					let idx = Math.floor((Math.random() * v.meme.length));
+					finalScoreEvaluate = v.meme[idx];
 					finalScoreLevel = v.level;
 					titleEmoji.set(v.emoji);
 				}
