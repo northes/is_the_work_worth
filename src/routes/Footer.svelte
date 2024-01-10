@@ -1,28 +1,32 @@
+<script lang="ts">
+	import {Button} from '$lib/components/ui/button'
+</script>
+
 <div class="flex flex-col items-center gap-2 text-sm text-muted-foreground cursor-pointer font-serif">
 		<div class="flex space-x-1.5 justify-center">
 			<div>
-				Light
+				<Button variant="link" class="p-0 m-0 text-muted-foreground h-0">Light</Button>
 			</div>
 			<div>
 				.
 			</div>
 			<div>
-				Language
+				<Button variant="link" class="p-0 m-0 text-muted-foreground h-0">Language</Button>
 			</div>
 			<div>
 				.
 			</div>
 			<div>
-				<a href="https://github.com/northes/is_the_work_worth">Github</a>
+				<a target="_blank" href="https://github.com/northes/is_the_work_worth" class="hover:underline underline-offset-4">Github</a>
 			</div>
 			<div>
 				.
 			</div>
 			<div>
-				<a href="https://vercel.com/">Vercel</a>
+				<a target="_blank" href="https://vercel.com/" class="hover:underline underline-offset-4">Vercel</a>
 			</div>
 		</div>
 		<div>
-			Power by 🍞 <a class="" href="https://northes.io" target="_blank">northes</a>.
+			Power by 🍞 <a class="hover:underline underline-offset-4" href="https://northes.io" target="_blank">northes</a>.
 		</div>
 </div>

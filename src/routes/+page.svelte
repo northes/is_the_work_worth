@@ -5,10 +5,12 @@
 	import Inputer from '$lib/components/inputer';
 	import Labeler from '$lib/components/labeler';
 	import type { ISelectItem } from '$lib/types/selectItem';
-	import { Loader2} from 'lucide-svelte';
+	import { Loader2 } from 'lucide-svelte';
 	import { confetti } from '@neoconfetti/svelte';
 	import { titleEmoji } from '$lib/stores/stores';
 	import { ScoreLevelList } from '$lib/types/score';
+	import { Switch } from '$lib/components/ui/switch';
+	import { Label } from '$lib/components/ui/label';
 
 
 	// 月薪
@@ -16,14 +18,22 @@
 	// 年薪
 	// let annualSalary: number;
 	// 薪酬类型(true:年薪，false:月薪)
-	let yearlySalary: boolean = true;
-	$: yearlySalaryMsg = yearlySalary ? '年薪' : '月薪';
+	let isYearlySalary: boolean = true;
+	$: yearlySalaryMsg = isYearlySalary ? '年薪' : '月薪';
+	$: salaryTips = ():string => {
+		let t = "税前" + yearlySalaryMsg + "，包含各种奖与各种补贴"
+		if (!isYearlySalary && salary > 0) {
+			t += '，计算可得年薪: ' + salary * 12
+		}
+		return t
+	}
 	// 薪酬
 	let salary: number;
 	// 平均日薪
-	$: dalySalary = Number((salary / 365).toFixed(2));
+	$: dalySalary = Number((isYearlySalary ? salary / 365 : salary * 12 / 365).toFixed(2));
+	$: console.log(dalySalary)
 	// 平均时薪
-	$: hourlySalary = Number((dalySalary/(workingHours - fishingTime)).toFixed(2))
+	$: hourlySalary = Number((dalySalary / (workingHours - fishingTime)).toFixed(2));
 
 	// 工作环境
 	const workingEnv: ISelectItem[] = [
@@ -121,16 +131,16 @@
 	// 下班后工作
 	const otWorking: ISelectItem[] = [
 		{
+			value: 0.85,
+			label: '下班后经常义务加班'
+		},
+		{
 			value: 0.95,
 			label: '下班后偶尔少量义务加班'
 		},
 		{
 			value: 1.0,
 			label: '下班后不怎么加班'
-		},
-		{
-			value: 0.85,
-			label: '下班后经常义务加班'
 		}
 	];
 	let otWorkingVal: ISelectItem;
@@ -205,8 +215,14 @@
 	let finalScoreEvaluate: string;
 	let calculateLoading: boolean = false;
 
-	function calculate() {
+	function preRecalculate() {
 		finalScore = 0;
+		finalEnvCoefficient = 1;
+		finalRestCoefficient = 1;
+	}
+
+	function calculate() {
+		preRecalculate()
 		calculateLoading = true;
 		setTimeout(() => {
 			// 环境系数
@@ -236,6 +252,9 @@
 			let b = 25 * (
 				workingHours + 0.5 * commutingTime - 0.5 * fishingTime
 			) * degreeVal.value * cityVal.value;
+
+			console.log(a,'--',b)
+
 			finalScore = Math.sqrt(a / b);
 			finalScore = Number(finalScore.toFixed(2));
 
@@ -269,7 +288,7 @@
 		otWorkingVal = otWorking[1];
 		workingHours = 19 - 10;
 		commutingTime = 0.5;
-		fishingTime = 1.5+4;
+		fishingTime = 1.5 + 4;
 		degreeVal = degrees[1];
 		cityVal = city[0];
 	}
@@ -315,10 +334,10 @@
 		<CardContent>
 			<form>
 				<div class="grid w-full items-center gap-4">
-					<Labeler label={"薪酬"}>
-						<Inputer bind:value={salary} tips={"包含各种奖与各种补贴"}>
-							<!--							<Switch id="airplane-mode" bind:checked={yearlySalary} />-->
-							<!--							<Label for="airplane-mode">{yearlySalaryMsg}</Label>-->
+					<Labeler label={"薪酬"} tips={salaryTips()}>
+						<Inputer bind:value={salary}>
+							<Switch id="id-year-salary" bind:checked={isYearlySalary} />
+							<Label for="id-year-salary">{yearlySalaryMsg}</Label>
 						</Inputer>
 					</Labeler>
 
@@ -342,19 +361,19 @@
 						<Selecter source={workingTime} bind:selectedVal={workingTimeVal} />
 					</Labeler>
 
-					<Labeler label="加班">
+					<Labeler label="加班" tips={"义务加班，不给钱的那种"}>
 						<Selecter source={otWorking} bind:selectedVal={otWorkingVal} />
 					</Labeler>
 
-					<Labeler label={"工作时长"}>
+					<Labeler label={"工作时长"} tips={"下班时间-上班时间"}>
 						<Inputer bind:value={workingHours} />
 					</Labeler>
 
-					<Labeler label={"通勤时长"}>
+					<Labeler label={"通勤时长"} tips={"包括上下班来回时长"}>
 						<Inputer bind:value={commutingTime} />
 					</Labeler>
 
-					<Labeler label={"摸鱼时长"}>
+					<Labeler label={"摸鱼时长"} tips={"不干活时长+吃饭时长+午休时长"}>
 						<Inputer bind:value={fishingTime} />
 					</Labeler>
 
