@@ -275,13 +275,11 @@
 				workingHours + 0.5 * commutingTime - 0.5 * fishingTime
 			) * degreeVal.value * cityVal.value;
 
-			console.log(a, '--', b);
-
 			finalScore = Math.sqrt(a / b);
 			finalScore = Number(finalScore.toFixed(2));
 
 			// 生成描述
-			ScoreLevelList.forEach((v, i) => {
+			ScoreLevelList.forEach((v) => {
 				if (finalScore >= v.min && finalScore < v.max) {
 					let idx = Math.floor((Math.random() * v.meme.length));
 					finalScoreEvaluate = v.meme[idx];
