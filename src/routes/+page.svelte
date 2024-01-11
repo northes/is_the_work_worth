@@ -5,13 +5,14 @@
 	import Inputer from '$lib/components/inputer';
 	import Labeler from '$lib/components/labeler';
 	import type { ISelectItem } from '$lib/types/selectItem';
-	import { Loader2 } from 'lucide-svelte';
+	import { Eye, EyeOff, Loader2 } from 'lucide-svelte';
 	import { confetti } from '@neoconfetti/svelte';
 	import { titleEmoji } from '$lib/stores/stores';
 	import { ScoreLevelList } from '$lib/types/score';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Label } from '$lib/components/ui/label';
 	import toast from 'svelte-french-toast';
+	import { onMount } from 'svelte';
 
 
 	// 月薪
@@ -222,7 +223,7 @@
 		finalRestCoefficient = 1;
 
 		if (!workingHours || !finalEnvCoefficient || !finalRestCoefficient || !dalySalary || !degreeVal || !cityVal) {
-			return false
+			return false;
 		}
 
 		return true;
@@ -230,7 +231,7 @@
 
 	function calculate() {
 		if (!preRecalculate()) {
-			toast.error("有空没填/没选")
+			toast.error('有空没填/没选');
 			return;
 		}
 		calculateLoading = true;
@@ -270,7 +271,7 @@
 			${25 * (
 				workingHours + 0.5 * commutingTime - 0.5 * fishingTime
 			) * degreeVal.value * cityVal.value}
-			`)
+			`);
 
 			let b = 25 * (
 				Number(workingHours) + 0.5 * Number(commutingTime) - 0.5 * Number(fishingTime)
@@ -279,7 +280,7 @@
 			finalScore = Math.sqrt(a / b);
 			finalScore = Number(finalScore.toFixed(2));
 
-			console.log(a,'----',b)
+			console.log(a, '----', b);
 
 			// 生成描述
 			ScoreLevelList.forEach((v) => {
@@ -303,7 +304,7 @@
 	// 填充示例数据
 	function demoVal() {
 		salary = 12000 * 12;
-		isYearlySalary = true
+		isYearlySalary = true;
 		workingEnvVal = workingEnv[3];
 		sexEnvVal = sexEnv[0];
 		colleagueEnvVal = colleagueEnv[1];
@@ -316,6 +317,19 @@
 		degreeVal = degrees[1];
 		cityVal = city[0];
 	}
+
+	// 结果展示板
+	let showDalySalary: boolean = false;
+	let showHourlySalary: boolean = false;
+	const buttonIconClass = 'h-4 w-4';
+
+	// debug
+	// onMount(() => {
+	// 	demoVal();
+	// 	setTimeout(() => {
+	// 		calculate();
+	// 	}, 50);
+	// });
 </script>
 
 <div>
@@ -340,10 +354,40 @@
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<p>综合指数：{finalScore}</p>
-				<p>日薪：{dalySalary}</p>
-				<p>时薪：{hourlySalary}</p>
-				<p>环境系数：{finalEnvCoefficient}</p>
+				<div>综合指数：{finalScore}</div>
+				<div class="flex gap-1">日薪：
+					<button class="flex items-center gap-2" on:click={()=>{
+						showDalySalary = !showDalySalary
+					}}>
+						{#if showDalySalary}
+							<Eye class="{buttonIconClass}" />
+						{:else }
+							<EyeOff class="{buttonIconClass}" />
+						{/if}
+						{#if showDalySalary}
+							{dalySalary}
+						{:else }
+							****
+						{/if}
+					</button>
+				</div>
+				<div class="flex gap-1">时薪：
+					<button class="flex items-center gap-2" on:click={()=>{
+						showHourlySalary = !showHourlySalary
+					}}>
+						{#if showHourlySalary}
+							<Eye class="{buttonIconClass}" />
+						{:else }
+							<EyeOff class="{buttonIconClass}" />
+						{/if}
+						{#if showHourlySalary}
+							{hourlySalary}
+						{:else }
+							****
+						{/if}
+					</button>
+				</div>
+				<div>环境系数：{finalEnvCoefficient}</div>
 			</CardContent>
 		</Card>
 	{/if}
