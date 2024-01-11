@@ -24,7 +24,7 @@
 	$: salaryTips = (): string => {
 		let t = '税前' + yearlySalaryMsg + '，包含各种奖与各种补贴';
 		if (!isYearlySalary && salary > 0) {
-			t += '，计算可得年薪: ' + salary * 12;
+			t += '，预估年薪: ' + salary * 12;
 		}
 		return t;
 	};
@@ -221,20 +221,8 @@
 		finalEnvCoefficient = 1;
 		finalRestCoefficient = 1;
 
-		switch (0) {
-			case dalySalary:
-			case finalEnvCoefficient:
-			case finalRestCoefficient:
-			case workingHours:
-				return false;
-		}
-
-		if (!degreeVal) {
-			return false;
-		}
-
-		if (!cityVal) {
-			return false;
+		if (!workingHours || !finalEnvCoefficient || !finalRestCoefficient || !dalySalary || !degreeVal || !cityVal) {
+			return false
 		}
 
 		return true;
@@ -271,12 +259,27 @@
 
 			// 计算最终值
 			let a = dalySalary * finalEnvCoefficient * finalRestCoefficient;
-			let b = 25 * (
+
+			console.log(`
+			workingHours ${workingHours}
+			commutingTime ${commutingTime} ${0.5 * commutingTime}
+			fishingTime ${fishingTime} ${0.5 * fishingTime}
+			degreeVal.value ${degreeVal.value}
+			cityVal.value ${cityVal.value}
+			${workingHours + 0.5 * commutingTime - 0.5 * fishingTime}
+			${25 * (
 				workingHours + 0.5 * commutingTime - 0.5 * fishingTime
+			) * degreeVal.value * cityVal.value}
+			`)
+
+			let b = 25 * (
+				Number(workingHours) + 0.5 * Number(commutingTime) - 0.5 * Number(fishingTime)
 			) * degreeVal.value * cityVal.value;
 
 			finalScore = Math.sqrt(a / b);
 			finalScore = Number(finalScore.toFixed(2));
+
+			console.log(a,'----',b)
 
 			// 生成描述
 			ScoreLevelList.forEach((v) => {
@@ -300,6 +303,7 @@
 	// 填充示例数据
 	function demoVal() {
 		salary = 12000 * 12;
+		isYearlySalary = true
 		workingEnvVal = workingEnv[3];
 		sexEnvVal = sexEnv[0];
 		colleagueEnvVal = colleagueEnv[1];
