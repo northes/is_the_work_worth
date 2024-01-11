@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {titleEmoji} from '$lib/stores/stores'
+	import { _ } from 'svelte-i18n'
 
 	let e :string = '';
 
@@ -10,6 +11,6 @@
 
 <div>
 	<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-		Is the work worth 🤔 <span class="text-primary">?</span>
+		{$_('title')} 🤔 <span class="text-primary">?</span>
 	</h1>
 </div>

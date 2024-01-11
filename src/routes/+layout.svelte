@@ -6,8 +6,6 @@
 	import QA from './QA.svelte';
 	import { Toaster } from 'svelte-french-toast';
 	import { ModeWatcher } from "mode-watcher";
-
-
 </script>
 
 <Toaster/>
