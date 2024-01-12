@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import {
+		Card,
+		CardContent,
+		CardDescription,
+		CardFooter,
+		CardHeader,
+		CardTitle
+	} from '$lib/components/ui/card';
 	import Selecter from '$lib/components/selecter';
 	import Inputer from '$lib/components/inputer';
 	import Labeler from '$lib/components/labeler';
@@ -13,7 +20,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import toast from 'svelte-french-toast';
 	import { onMount } from 'svelte';
-
+	import { _, locale } from 'svelte-i18n';
 
 	// 月薪
 	// let monthlySalary: number;
@@ -21,71 +28,82 @@
 	// let annualSalary: number;
 	// 薪酬类型(true:年薪，false:月薪)
 	let isYearlySalary: boolean = true;
-	$: yearlySalaryMsg = isYearlySalary ? '年薪' : '月薪';
+	$: yearlySalaryMsg = isYearlySalary ? $_('annual_salary') : $_('monthly_salary');
 	$: salaryTips = (): string => {
-		let t = '税前' + yearlySalaryMsg + '，包含各种奖与各种补贴';
+		let t =
+			$_('pre_tax') +
+			' ' +
+			yearlySalaryMsg +
+			$_('comma') +
+			$_('includes_a_variety_of_awards_and_subsidies');
 		if (!isYearlySalary && salary > 0) {
-			t += '，预估年薪: ' + salary * 12;
+			t += $_('comma')+ $_('estimated_annual_salary') +$_('colon') + salary * 12;
 		}
 		return t;
 	};
 	// 薪酬
 	let salary: number;
 	// 平均日薪
-	$: dalySalary = Number((isYearlySalary ? salary / 365 : salary * 12 / 365).toFixed(2));
+	$: dalySalary = Number((isYearlySalary ? salary / 365 : (salary * 12) / 365).toFixed(2));
 	$: console.log(dalySalary);
 	// 平均时薪
 	$: hourlySalary = Number((dalySalary / (workingHours - fishingTime)).toFixed(2));
 
 	// 工作环境
-	const workingEnv: ISelectItem[] = [
+	$: workingEnv = [
 		{
 			value: 0.85,
-			label: '偏僻地区或郊区的工厂、工地、艰苦户外等'
+			label: $_('working_env_085')
 		},
 		{
 			value: 0.9,
-			label: '工厂、工地、艰苦户外等'
+			label: $_('working_env_090')
 		},
 		{
 			value: 1.0,
-			label: '普普通通'
+			label: $_('working_env_010')
 		},
 		{
 			value: 1.05,
-			label: 'CBD、体制内'
+			label: $_('working_env_105')
 		}
 	];
 	let workingEnvVal: ISelectItem;
 	// 异性
-	const sexEnv: ISelectItem[] = [
+	$: sexEnv = [
 		{
 			value: 0.98,
-			label: '没有好看的'
+			// label: '没有好看的'
+			label: $_('sex_env_098')
 		},
 		{
 			value: 1.0,
-			label: '不多不少'
+			// label: '不多不少'
+			label: $_('sex_env_100')
 		},
 		{
 			value: 1.02,
-			label: '有很多好看的'
+			// label: '有很多好看的'
+			label: $_('sex_env_102')
 		}
 	];
 	let sexEnvVal: ISelectItem;
 	// 同事
-	const colleagueEnv: ISelectItem[] = [
+	$: colleagueEnv = [
 		{
 			value: 0.98,
-			label: 'SB很多'
+			// label: 'SB很多'
+			label: $_('colleague_env_098')
 		},
 		{
 			value: 1.0,
-			label: '基本上都是普通同事'
+			// label: '基本上都是普通同事'
+			label: $_('colleague_env_100')
 		},
 		{
 			value: 1.02,
-			label: '优秀的大佬很多'
+			// label: '优秀的大佬很多'
+			label: $_('colleague_env_102')
 		}
 	];
 	let colleagueEnvVal: ISelectItem;
@@ -94,55 +112,74 @@
 	// $: finalEnvCoefficient = workingEnvVal.value * sexEnvVal.value * colleagueEnvVal.value;
 
 	// 休息日
-	const restDays: ISelectItem[] = [
+	$: restDays = [
 		{
 			value: 0.8,
-			label: '月休2天及以下'
-		}, {
+			// label: '月休2天及以下'
+			label: $_('rest_days_080')
+		},
+		{
 			value: 0.85,
-			label: '月休3天'
-		}, {
+			// label: '月休3天'
+			label: $_('rest_days_085')
+		},
+		{
 			value: 0.9,
-			label: '单休'
-		}, {
+			// label: '单休'
+			label: $_('rest_days_090')
+		},
+		{
 			value: 0.95,
-			label: '大小周'
-		}, {
+			// label: '大小周'
+			label: $_('rest_days_095')
+		},
+		{
 			value: 1.0,
-			label: '双休'
-		}, {
+			// label: '双休'
+			label: $_('rest_days_100')
+		},
+		{
 			value: 1.05,
-			label: '双休以上'
+			// label: '双休以上'
+			label: $_('rest_days_105')
 		}
 	];
 	let restDaysVal: ISelectItem;
 	// 上班时间
-	const workingTime: ISelectItem[] = [
+	$: workingTime = [
 		{
 			value: 0.95,
-			label: '早上8点左右上班'
-		}, {
-			value: 0.10,
-			label: '早上9点左右上班'
-		}, {
+			// label: '早上8点左右上班'
+			label: $_('working_time_095')
+		},
+		{
+			value: 0.1,
+			// label: '早上9点左右上班'
+			label: $_('working_time_010')
+		},
+		{
 			value: 1.05,
-			label: '早上10点以后上班'
+			// label: '早上10点以后上班'
+			label: $_('working_time_105')
 		}
 	];
 	let workingTimeVal: ISelectItem;
 	// 下班后工作
-	const otWorking: ISelectItem[] = [
+	$: otWorking = [
 		{
 			value: 0.85,
-			label: '下班后经常义务加班'
+			// label: '下班后经常义务加班'
+			label: $_('ot_working_085')
 		},
 		{
 			value: 0.95,
-			label: '下班后偶尔少量义务加班'
+			// label: '下班后偶尔少量义务加班'
+			label: $_('ot_working_095')
 		},
 		{
 			value: 1.0,
-			label: '下班后不怎么加班'
+			// label: '下班后不怎么加班'
+			label: $_('ot_working_100')
 		}
 	];
 	let otWorkingVal: ISelectItem;
@@ -158,58 +195,68 @@
 	let fishingTime: number;
 
 	// 学历系数
-	const degrees: ISelectItem[] = [
+	$: degrees = [
 		{
 			value: 0.9,
-			label: '专科及以下'
+			// label: '专科及以下'
+			label: $_('degrees_090')
 		},
 		{
 			value: 1.0,
-			label: '普通本科'
+			// label: '普通本科'
+			label: $_('degrees_100')
 		},
 		{
 			value: 1.1,
-			label: '211/985 本科'
+			// label: '211/985 本科'
+			label: $_('degrees_110')
 		},
 		{
 			value: 1.6,
-			label: '普通硕士'
+			// label: '普通硕士'
+			label: $_('degrees_160')
 		},
 		{
 			value: 1.8,
-			label: '211/985 硕士'
+			// label: '211/985 硕士'
+			label: $_('degrees_180')
 		},
 		{
 			value: 2.0,
-			label: '普通博士'
+			// label: '普通博士'
+			label: $_('degrees_200')
 		},
 		{
 			value: 2.4,
-			label: '211/985 博士'
+			// label: '211/985 博士'
+			label: $_('degrees_240')
 		}
 	];
 	let degreeVal: ISelectItem;
 	// 城市系数
-	const city: ISelectItem[] = [
+	$: city = [
 		{
 			value: 1.1,
-			label: '一线城市'
+			// label: '一线城市'
+			label: $_('city_110')
 		},
 		{
 			value: 1.05,
-			label: '新一线城市'
+			// label: '新一线城市'
+			label: $_('city_105')
 		},
 		{
 			value: 1.0,
-			label: '二线城市'
+			// label: '二线城市'
+			label: $_('city_100')
 		},
 		{
 			value: 0.9,
-			label: '三线及以下城市'
+			// label: '三线及以下城市'
+			label: $_('city_090')
 		}
 	];
 	let cityVal: ISelectItem;
-
 
 	// 最终计算得出的工作性价比
 	let finalScore: number;
@@ -222,7 +269,14 @@
 		finalEnvCoefficient = 1;
 		finalRestCoefficient = 1;
 
-		if (!workingHours || !finalEnvCoefficient || !finalRestCoefficient || !dalySalary || !degreeVal || !cityVal) {
+		if (
+			!workingHours ||
+			!finalEnvCoefficient ||
+			!finalRestCoefficient ||
+			!dalySalary ||
+			!degreeVal ||
+			!cityVal
+		) {
 			return false;
 		}
 
@@ -231,7 +285,7 @@
 
 	function calculate() {
 		if (!preRecalculate()) {
-			toast.error('有空没填/没选');
+			toast.error($_('params_require'));
 			return;
 		}
 		calculateLoading = true;
@@ -268,14 +322,14 @@
 			degreeVal.value ${degreeVal.value}
 			cityVal.value ${cityVal.value}
 			${workingHours + 0.5 * commutingTime - 0.5 * fishingTime}
-			${25 * (
-				workingHours + 0.5 * commutingTime - 0.5 * fishingTime
-			) * degreeVal.value * cityVal.value}
+			${25 * (workingHours + 0.5 * commutingTime - 0.5 * fishingTime) * degreeVal.value * cityVal.value}
 			`);
 
-			let b = 25 * (
-				Number(workingHours) + 0.5 * Number(commutingTime) - 0.5 * Number(fishingTime)
-			) * degreeVal.value * cityVal.value;
+			let b =
+				25 *
+				(Number(workingHours) + 0.5 * Number(commutingTime) - 0.5 * Number(fishingTime)) *
+				degreeVal.value *
+				cityVal.value;
 
 			finalScore = Math.sqrt(a / b);
 			finalScore = Number(finalScore.toFixed(2));
@@ -285,7 +339,7 @@
 			// 生成描述
 			ScoreLevelList.forEach((v) => {
 				if (finalScore >= v.min && finalScore < v.max) {
-					let idx = Math.floor((Math.random() * v.meme.length));
+					let idx = Math.floor(Math.random() * v.meme.length);
 					finalScoreEvaluate = v.meme[idx];
 					finalScoreLevel = v.level;
 					titleEmoji.set(v.emoji);
@@ -297,7 +351,6 @@
 			// 返回顶部
 			document.body.scrollTop = document.documentElement.scrollTop = 0;
 			console.log(finalScore);
-
 		}, 200);
 	}
 
@@ -330,22 +383,38 @@
 	// 		calculate();
 	// 	}, 50);
 	// });
+
+	// locale.subscribe(() => {
+	// workingEnv = workingEnvFunc();
+	// console.log(workingEnv);
+	// workingEnv = [...workingEnv]
+	// console.log(workingEnv)
+	// sexEnv = sexEnvFunc();
+	// colleagueEnv = colleagueEnvFunc();
+	// restDays = restDaysFunc();
+	// workingTime = workingTimeFunc();
+	// otWorking = otWorkingFunc();
+	// degrees = degreesFun();
+	// city = cityFunc();
+	// });
 </script>
 
 <div>
 	{#if finalScore > 0}
 		<div class="flex justify-center">
-			<div use:confetti={{
-				particleSize: 10,
-				stageHeight: 1024,
-				stageWidth: 1024
-			}}>
-			</div>
+			<div
+				use:confetti={{
+					particleSize: 10,
+					stageHeight: 1024,
+					stageWidth: 1024
+				}}
+			></div>
 		</div>
 		<Card class="mb-6 bg-primary text-white">
 			<CardHeader>
 				<CardTitle>
-					工作性价比&nbsp;&nbsp;-&nbsp;&nbsp;{finalScoreLevel} {$titleEmoji}
+					{$_('price-performance_ratio_of_work')}&nbsp;&nbsp;-&nbsp;&nbsp;{finalScoreLevel}
+					{$titleEmoji}
 				</CardTitle>
 				<CardDescription>
 					<div class="text-white">
@@ -354,105 +423,122 @@
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<div>综合指数：{finalScore}</div>
-				<div class="flex gap-1">日薪：
-					<button class="flex items-center gap-2" on:click={()=>{
-						showDalySalary = !showDalySalary
-					}}>
+				<div>{$_('composite_index')}：{finalScore}</div>
+				<div class="flex gap-1">
+					{$_('daily_salary')}：
+					<button
+						class="flex items-center gap-2"
+						on:click={() => {
+							showDalySalary = !showDalySalary;
+						}}
+					>
 						{#if showDalySalary}
-							<Eye class="{buttonIconClass}" />
-						{:else }
-							<EyeOff class="{buttonIconClass}" />
+							<Eye class={buttonIconClass} />
+						{:else}
+							<EyeOff class={buttonIconClass} />
 						{/if}
 						{#if showDalySalary}
 							{dalySalary}
-						{:else }
+						{:else}
 							****
 						{/if}
 					</button>
 				</div>
-				<div class="flex gap-1">时薪：
-					<button class="flex items-center gap-2" on:click={()=>{
-						showHourlySalary = !showHourlySalary
-					}}>
+				<div class="flex gap-1">
+					{$_('hourly_salary')}：
+					<button
+						class="flex items-center gap-2"
+						on:click={() => {
+							showHourlySalary = !showHourlySalary;
+						}}
+					>
 						{#if showHourlySalary}
-							<Eye class="{buttonIconClass}" />
-						{:else }
-							<EyeOff class="{buttonIconClass}" />
+							<Eye class={buttonIconClass} />
+						{:else}
+							<EyeOff class={buttonIconClass} />
 						{/if}
 						{#if showHourlySalary}
 							{hourlySalary}
-						{:else }
+						{:else}
 							****
 						{/if}
 					</button>
 				</div>
-				<div>环境系数：{finalEnvCoefficient}</div>
+				<div>{$_('env_coefficient')}: {finalEnvCoefficient}</div>
 			</CardContent>
 		</Card>
 	{/if}
 
 	<Card>
 		<CardHeader>
-			<CardTitle>
-			</CardTitle>
-			<CardDescription>
-			</CardDescription>
+			<CardTitle></CardTitle>
+			<CardDescription></CardDescription>
 		</CardHeader>
 		<CardContent>
 			<form>
 				<div class="grid w-full items-center gap-4">
-					<Labeler label={"薪酬"} tips={salaryTips()}>
-						<Inputer bind:value={salary}>
-							<Switch id="id-year-salary" bind:checked={isYearlySalary} />
-							<Label for="id-year-salary">{yearlySalaryMsg}</Label>
-						</Inputer>
-					</Labeler>
+					{#key $locale}
+						<Labeler label={$_('salary')} tips={salaryTips()}>
+							<Inputer bind:value={salary}>
+								<Switch id="id-year-salary" bind:checked={isYearlySalary} />
+								<Label for="id-year-salary">{yearlySalaryMsg}</Label>
+							</Inputer>
+						</Labeler>
 
-					<Labeler label="工作环境">
-						<Selecter source={workingEnv} bind:selectedVal={workingEnvVal} />
-					</Labeler>
+						<Labeler label={$_('working_env')}>
+							<Selecter bind:source={workingEnv} bind:selectedVal={workingEnvVal} />
+						</Labeler>
 
-					<Labeler label="异性">
-						<Selecter source={sexEnv} bind:selectedVal={sexEnvVal} />
-					</Labeler>
+						<Labeler label={$_('opposite_sex')}>
+							<Selecter bind:source={sexEnv} bind:selectedVal={sexEnvVal} />
+						</Labeler>
 
-					<Labeler label="同事">
-						<Selecter source={colleagueEnv} bind:selectedVal={colleagueEnvVal} />
-					</Labeler>
+						<Labeler label={$_('colleague')}>
+							<Selecter bind:source={colleagueEnv} bind:selectedVal={colleagueEnvVal} />
+						</Labeler>
 
-					<Labeler label="休息日">
-						<Selecter source={restDays} bind:selectedVal={restDaysVal} />
-					</Labeler>
+						<Labeler label={$_('rest_days')}>
+							<Selecter bind:source={restDays} bind:selectedVal={restDaysVal} />
+						</Labeler>
 
-					<Labeler label="上班时间">
-						<Selecter source={workingTime} bind:selectedVal={workingTimeVal} />
-					</Labeler>
+						<Labeler label={$_('time_for_work')}>
+							<Selecter bind:source={workingTime} bind:selectedVal={workingTimeVal} />
+						</Labeler>
 
-					<Labeler label="加班" tips={"义务加班，不给钱的那种"}>
-						<Selecter source={otWorking} bind:selectedVal={otWorkingVal} />
-					</Labeler>
+						<Labeler label={$_('work_overtime')} tips={$_('work_overtime_tips')}>
+							<Selecter bind:source={otWorking} bind:selectedVal={otWorkingVal} />
+						</Labeler>
 
-					<Labeler label={"工作时长"} tips={"下班时间-上班时间"}>
-						<Inputer bind:value={workingHours} />
-					</Labeler>
+						<Labeler
+							label={$_('working_time')}
+							tips={$_('starting_work_time') + $_('ending_work_time')}
+						>
+							<Inputer bind:value={workingHours} />
+						</Labeler>
 
-					<Labeler label={"通勤时长"} tips={"包括上下班来回时长"}>
-						<Inputer bind:value={commutingTime} />
-					</Labeler>
+						<Labeler label={$_('commuting_time')} tips={$_('commuting_time_tips')}>
+							<Inputer bind:value={commutingTime} />
+						</Labeler>
 
-					<Labeler label={"摸鱼时长"} tips={"不干活时长+吃饭时长+午休时长"}>
-						<Inputer bind:value={fishingTime} />
-					</Labeler>
+						<Labeler
+							label={$_('mess_around_time')}
+							tips={$_('time_for_no_working') +
+								'+' +
+								$_('time_for_eating') +
+								'+' +
+								$_('time_for_lunch_break')}
+						>
+							<Inputer bind:value={fishingTime} />
+						</Labeler>
 
-					<Labeler label="学历">
-						<Selecter source={degrees} bind:selectedVal={degreeVal} />
-					</Labeler>
+						<Labeler label={$_('degree')}>
+							<Selecter bind:source={degrees} bind:selectedVal={degreeVal} />
+						</Labeler>
 
-					<Labeler label="城市">
-						<Selecter source={city} bind:selectedVal={cityVal} />
-					</Labeler>
-
+						<Labeler label={$_('city')}>
+							<Selecter bind:source={city} bind:selectedVal={cityVal} />
+						</Labeler>
+					{/key}
 				</div>
 			</form>
 		</CardContent>
@@ -461,9 +547,9 @@
 				{#if calculateLoading}
 					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 				{/if}
-				计算
+				{$_('calculate')}
 			</Button>
-			<Button variant={"outline"} class="w-1/2" on:click={demoVal}>示例数据</Button>
+			<Button variant={'outline'} class="w-1/2" on:click={demoVal}>{$_('demo_val')}</Button>
 		</CardFooter>
 	</Card>
 </div>
