@@ -1,22 +1,19 @@
-# create-svelte
+# Is the work worth?
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+A tiny tool that can calculate the cost performance of your current job.
 
-## Creating a project
+## Online
 
-If you're seeing this, you've probably already done this step. Congrats!
+[https://work-worth.vercel.app](https://work-worth.vercel.app)
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+## Feature
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+- Second edition algorithm
+- Show the calculation results with a sense of ritual
+- Multilingual support
+- Dark mode
 
 ## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
 npm run dev
@@ -27,12 +24,8 @@ npm run dev -- --open
 
 ## Building
 
-To create a production version of your app:
+To create a production version:
 
 ```bash
 npm run build
 ```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
