@@ -1,4 +1,4 @@
-# Is the work worth?
+<h1 align="center">Is the work worth 🤔 ?</h1>
 
 <div align="center">
 
