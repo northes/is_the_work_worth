@@ -63,6 +63,6 @@
 		</div>
 	</div>
 	<div>
-		Power by 🍞 <a class="hover:underline underline-offset-4" href="https://northes.io" target="_blank">northes</a>.
+		Cooking by 🍞 <a class="hover:underline underline-offset-4" href="https://northes.io" target="_blank">northes</a>.
 	</div>
 </div>
