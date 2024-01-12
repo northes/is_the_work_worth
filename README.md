@@ -1,6 +1,16 @@
 # Is the work worth?
 
-A tiny tool that can calculate the cost performance of your current job.
+<div align="center">
+
+[![License](https://img.shields.io/github/license/northes/is_the_work_worth)](https://github.com/northes/is_the_work_worth/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/northes/is_the_work_worth)](https://github.com/northes/is_the_work_worth/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/northes/is_the_work_worth)](https://github.com/northes/is_the_work_worth/fork)
+
+
+<strong>A tiny tool that can calculate the cost performance of your current job.</strong>
+</div>
+
+
 
 ## Online
 
