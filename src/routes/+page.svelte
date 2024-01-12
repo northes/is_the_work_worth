@@ -28,7 +28,20 @@
 	// let annualSalary: number;
 	// 薪酬类型(true:年薪，false:月薪)
 	let isYearlySalary: boolean = true;
+	let lastSalaryTypeIsYearly: boolean = true;
 	$: yearlySalaryMsg = isYearlySalary ? $_('annual_salary') : $_('monthly_salary');
+	$: {
+		isYearlySalary;
+		console.log("change")
+		if (isYearlySalary !== lastSalaryTypeIsYearly && salary > 0) {
+			if (lastSalaryTypeIsYearly) {
+				salary = salary / 12
+			} else {
+				salary = salary * 12
+			}
+			lastSalaryTypeIsYearly = isYearlySalary
+		}
+	}
 	$: salaryTips = (): string => {
 		let t =
 			$_('pre_tax') +
