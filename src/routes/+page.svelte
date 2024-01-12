@@ -31,8 +31,6 @@
 	let lastSalaryTypeIsYearly: boolean = true;
 	$: yearlySalaryMsg = isYearlySalary ? $_('annual_salary') : $_('monthly_salary');
 	$: {
-		isYearlySalary;
-		console.log("change")
 		if (isYearlySalary !== lastSalaryTypeIsYearly && salary > 0) {
 			if (lastSalaryTypeIsYearly) {
 				salary = salary / 12
@@ -58,7 +56,6 @@
 	let salary: number;
 	// 平均日薪
 	$: dalySalary = Number((isYearlySalary ? salary / 365 : (salary * 12) / 365).toFixed(2));
-	$: console.log(dalySalary);
 	// 平均时薪
 	$: hourlySalary = Number((dalySalary / (workingHours - fishingTime)).toFixed(2));
 
@@ -328,15 +325,15 @@
 			// 计算最终值
 			let a = dalySalary * finalEnvCoefficient * finalRestCoefficient;
 
-			console.log(`
-			workingHours ${workingHours}
-			commutingTime ${commutingTime} ${0.5 * commutingTime}
-			fishingTime ${fishingTime} ${0.5 * fishingTime}
-			degreeVal.value ${degreeVal.value}
-			cityVal.value ${cityVal.value}
-			${workingHours + 0.5 * commutingTime - 0.5 * fishingTime}
-			${25 * (workingHours + 0.5 * commutingTime - 0.5 * fishingTime) * degreeVal.value * cityVal.value}
-			`);
+			// console.log(`
+			// workingHours ${workingHours}
+			// commutingTime ${commutingTime} ${0.5 * commutingTime}
+			// fishingTime ${fishingTime} ${0.5 * fishingTime}
+			// degreeVal.value ${degreeVal.value}
+			// cityVal.value ${cityVal.value}
+			// ${workingHours + 0.5 * commutingTime - 0.5 * fishingTime}
+			// ${25 * (workingHours + 0.5 * commutingTime - 0.5 * fishingTime) * degreeVal.value * cityVal.value}
+			// `);
 
 			let b =
 				25 *
@@ -347,7 +344,7 @@
 			finalScore = Math.sqrt(a / b);
 			finalScore = Number(finalScore.toFixed(2));
 
-			console.log(a, '----', b);
+			// console.log(a, '----', b);
 
 			// 生成描述
 			ScoreLevelList.forEach((v) => {
@@ -363,7 +360,7 @@
 
 			// 返回顶部
 			document.body.scrollTop = document.documentElement.scrollTop = 0;
-			console.log(finalScore);
+			// console.log(finalScore);
 		}, 200);
 	}
 
